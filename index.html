@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Devashree</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#170f22;
+    --bg-panel:#211531;
+    --bg-panel-2:#2a1a3d;
+    --rose:#e9b7c9;
+    --rose-deep:#c26e8f;
+    --gold:#d7ac6e;
+    --cream:#f6ecdf;
+    --ink:rgba(246,236,223,0.86);
+    --ink-soft:rgba(246,236,223,0.62);
+    --line:rgba(215,172,110,0.28);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:radial-gradient(ellipse at 50% -10%, #2c1c40 0%, var(--bg-deep) 55%, #100a19 100%);
+    color:var(--ink);
+    font-family:'EB Garamond', serif;
+    overflow-x:hidden;
+    min-height:100vh;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001s !important; transition-duration:0.001s !important;}
+  }
+
+  /* ---------- ambient stars & hearts ---------- */
+  #sky{position:fixed; inset:0; pointer-events:none; z-index:0;}
+  .star{position:absolute; width:2px; height:2px; background:var(--cream); border-radius:50%; opacity:.5; animation:twinkle 4s ease-in-out infinite;}
+  @keyframes twinkle{0%,100%{opacity:.15;} 50%{opacity:.8;}}
+  .drift-heart{position:fixed; bottom:-40px; font-size:14px; color:var(--rose); opacity:.35; pointer-events:none; z-index:0; animation:drift linear infinite;}
+  @keyframes drift{
+    0%{transform:translateY(0) translateX(0) rotate(0deg); opacity:0;}
+    10%{opacity:.45;}
+    90%{opacity:.3;}
+    100%{transform:translateY(-110vh) translateX(var(--dx,20px)) rotate(20deg); opacity:0;}
+  }
+
+  /* ---------- cover / envelope ---------- */
+  #cover{
+    position:relative; z-index:2;
+    min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:24px; cursor:pointer;
+    transition:opacity .9s ease, transform .9s ease;
+  }
+  #cover.hidden{opacity:0; transform:scale(.96); pointer-events:none;}
+
+  .eyebrow{
+    font-family:'Cormorant Garamond', serif; font-style:italic; font-weight:500;
+    letter-spacing:.12em; color:var(--gold); font-size:15px; margin-bottom:10px; opacity:.9;
+  }
+  .cover-title{
+    font-family:'Playfair Display', serif; font-weight:600; font-style:italic;
+    font-size:clamp(28px,6vw,46px); color:var(--cream); margin:0 0 42px 0; line-height:1.25;
+  }
+
+  .envelope-wrap{ width:min(320px,80vw); perspective:1200px; }
+  .envelope{
+    position:relative; width:100%; padding-top:64%;
+    background:linear-gradient(160deg,#3a2350,#2a1a3d);
+    border:1px solid var(--line); border-radius:6px;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.6);
+  }
+  .flap{
+    position:absolute; top:0; left:0; width:100%; height:0; border-style:solid;
+    border-width:0 160px 130px 160px; border-color:transparent transparent #4a2c66 transparent;
+    transform-origin:top center; transition:transform .8s cubic-bezier(.6,.05,.28,.98);
+    filter:drop-shadow(0 4px 10px rgba(0,0,0,.35));
+  }
+  .envelope-wrap.open .flap{ transform:rotateX(178deg); }
+  .seal{
+    position:absolute; left:50%; top:38%; width:54px; height:54px; margin:-27px 0 0 -27px;
+    background:radial-gradient(circle at 35% 30%, var(--rose-deep), #7a2f45 75%);
+    border-radius:50%; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 14px rgba(0,0,0,.4); z-index:3;
+    transition:transform .5s ease, opacity .5s ease;
+  }
+  .seal svg{width:22px; height:22px;}
+  .envelope-wrap.open .seal{ transform:scale(0); opacity:0; }
+  .letter-peek{
+    position:absolute; left:8%; right:8%; bottom:6%; height:78%;
+    background:linear-gradient(180deg,#f6ecdf,#ece0cd);
+    border-radius:3px; opacity:0; transform:translateY(10%);
+    transition:opacity .6s ease .3s, transform .6s ease .3s;
+  }
+  .envelope-wrap.open .letter-peek{ opacity:1; transform:translateY(-6%); }
+
+  .tap-hint{
+    margin-top:34px; font-family:'Cormorant Garamond',serif; font-style:italic;
+    color:var(--ink-soft); font-size:15px; letter-spacing:.06em;
+    animation:pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:.5;} 50%{opacity:1;}}
+
+  /* ---------- letter ---------- */
+  #letter{
+    position:relative; z-index:2; max-width:680px; margin:0 auto; padding:0 22px 120px;
+    opacity:0; transform:translateY(24px); transition:opacity 1s ease, transform 1s ease;
+  }
+  #letter.show{ opacity:1; transform:translateY(0); }
+
+  .letter-hero{ text-align:center; padding:96px 0 40px; }
+  .letter-hero .to{ font-family:'Cormorant Garamond',serif; font-style:italic; color:var(--gold); font-size:16px; letter-spacing:.15em; text-transform:uppercase; }
+  .letter-hero h1{
+    font-family:'Playfair Display', serif; font-weight:600; font-size:clamp(30px,7vw,50px);
+    margin:14px 0 6px; color:var(--cream); line-height:1.2;
+  }
+  .letter-hero .hearts-row{ margin-top:14px; color:var(--rose-deep); font-size:14px; letter-spacing:6px; }
+
+  .panel{
+    background:linear-gradient(180deg, var(--bg-panel), var(--bg-panel-2));
+    border:1px solid var(--line); border-radius:14px; padding:clamp(24px,5vw,52px);
+    box-shadow:0 40px 80px -40px rgba(0,0,0,.6);
+  }
+
+  .prose p{
+    font-size:19px; line-height:1.85; color:var(--ink); margin:0 0 26px;
+  }
+  .prose p:first-of-type::first-letter{
+    font-family:'Playfair Display', serif; font-size:52px; font-weight:600; color:var(--gold);
+    float:left; line-height:.8; padding:6px 10px 0 0;
+  }
+
+  .note{
+    margin:0 0 26px; padding:14px 18px; border-left:2px solid var(--gold);
+    background:rgba(215,172,110,0.07); border-radius:0 8px 8px 0;
+  }
+  .note .stamp{
+    display:inline-block; font-family:'Cormorant Garamond',serif; font-style:italic;
+    color:var(--gold); font-size:13px; letter-spacing:.06em; margin-bottom:4px;
+  }
+  .note p{ margin:0; font-size:17px; line-height:1.65; color:var(--ink-soft); }
+
+  .divider{
+    display:flex; align-items:center; justify-content:center; gap:14px; margin:52px 0 38px; color:var(--gold);
+  }
+  .divider .line{ height:1px; width:56px; background:var(--line); }
+  .postmark{
+    width:78px; height:78px; border:1.5px dashed var(--gold); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    font-family:'Cormorant Garamond',serif; font-style:italic; font-size:12.5px; letter-spacing:.05em;
+    color:var(--gold); line-height:1.3; padding:8px; flex-shrink:0;
+  }
+
+  .vow{
+    text-align:center; margin:44px 0; padding:32px 18px;
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  }
+  .vow p{
+    font-family:'Cormorant Garamond', serif; font-style:italic; font-weight:500;
+    font-size:clamp(20px,4vw,26px); color:var(--rose); line-height:1.55; margin:0;
+  }
+
+  .signoff{ text-align:center; margin-top:56px; }
+  .signoff .line1{ font-family:'Cormorant Garamond',serif; font-style:italic; font-size:22px; color:var(--cream); }
+  .signoff .line2{ margin-top:10px; font-size:14px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); }
+  .signoff .cry{ margin-top:22px; font-size:13px; color:var(--ink-soft); font-style:italic; }
+
+  footer{ text-align:center; padding:40px 0 10px; color:var(--ink-soft); font-size:13px; letter-spacing:.08em; }
+
+  @media (max-width:480px){
+    .envelope-wrap{ width:min(280px,84vw); }
+    .prose p{ font-size:17.5px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="sky"></div>
+
+<section id="cover">
+  <div class="eyebrow">a letter</div>
+  <h1 class="cover-title">for Devashree,<br>from Devuu's person</h1>
+  <div class="envelope-wrap" id="envelopeWrap">
+    <div class="envelope">
+      <div class="letter-peek"></div>
+      <div class="flap"></div>
+      <div class="seal">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-7.5-4.6-10-9.3C.5 8.2 2.4 5 6 5c2 0 3.6 1.1 4.5 2.7C11.4 6.1 13 5 15 5c3.6 0 5.5 3.2 4 6.7C19.5 16.4 12 21 12 21z" fill="#f6ecdf" opacity="0.9"/></svg>
+      </div>
+    </div>
+  </div>
+  <div class="tap-hint">tap the seal to open</div>
+</section>
+
+<section id="letter">
+  <div class="letter-hero">
+    <div class="to">for devashree</div>
+    <h1>Love You The Love You</h1>
+    <div class="hearts-row">💕 🩵 🩶 🩷 🧡 ♥️</div>
+  </div>
+
+  <div class="panel prose">
+
+    <p>Okay so here we go&hellip; feels a bit heavy to write, the time has come for which we both never wished for 🙂. I still remember the time around 2020, between 2&ndash;3 pm one afternoon during Covid, when I was coming back from the medical store and got a call from a random number, asking for guidance. I never thought that call would change my life completely 💕.</p>
+
+    <p>Those late night texts. Flirty messages. Colour hearts 🩵🩶🩷🧡♥️. My first birthday present from you 😋 &mdash; how can I forget that. I don't think I need to talk about the theatre scenes 😂&hellip; phir kabhi jab hamare bacche bade honge, tabhi saath mein unhe batayenge 💕. We may not have been the perfect couple back then, because of my foolishness, but I loved every moment of it with you.</p>
+
+    <div class="note">
+      <span class="stamp">14th Aug, Friday &middot; 8:40 am</span>
+      <p>Oh shit, I just missed my metro stop 😂😂 have to take another metro and come a station back. Dekh Devashree, tere pyaar ney mujhe kya kar diya hai 😂🩷.</p>
+    </div>
+
+    <p>Devashree, tbh I didn't have that bad a time dating Akriti &mdash; what I regret is the time I wasted coming out of it. I didn't just lose time and mental energy, I even lost my Devuu 🙃. Jo ladki mujhse itna pyaar karti thi, mujhe dikh hi nahi raha tha. Mann karta hai jaise bank ke employees pe gussa karta hoon, waise hi khud ko bhi suna doon 🫠.</p>
+
+    <div class="note">
+      <span class="stamp">14th Aug &middot; 9:05 am</span>
+      <p>Meri baby ko uthake aata hoon, varna soti rahegi 🥰.</p>
+    </div>
+    <div class="note">
+      <span class="stamp">14th Aug &middot; 9:10 pm</span>
+      <p>Another day passed, meeting you &mdash; probably our last meet 😭. I wish not, though.</p>
+    </div>
+
+    <p>Humne kabhi short duration mein baat hi nahi ki &mdash; hamesha ghanto tak, aur achi wali conversation. Tere Pune se Mumbai shift hone se pehle bhi hum ghanto tak baat karte the, tab ek hi cheez sochta tha: please, ek chance de do mujhe apni mistake sudhaarne ka.</p>
+
+    <div class="note">
+      <span class="stamp">15th June &middot; 8 pm</span>
+      <p>I'm meeting Devyy again, yayyy 💕. I guess this will be our last long drive, and probably last meet before Monday 🙂&hellip; okay bye, late ho raha hai, ghar aakar continue karta hoon.</p>
+    </div>
+
+    <p><strong style="color:var(--gold); font-weight:500;">20th June 2026</strong> &mdash; finally we met, after so many years. Our first long drive, for prawns craving, was crazy. Whenever I used to sit opposite you, you'd make me sit beside you &mdash; I really liked that 🥰.</p>
+
+    <p>Yaar, mujhe hamare saare dates yaad bhi nahi hai, and I'm happy ki nahi hai, kyunki humne har possible moment saath mein share kiya. The way the train station date 😂 mattered to you, mere liye bhi utna hi important tha. When you leaned your head on me, I felt this sight of relief &mdash; to know that Devashree feels safe around me. That's what I wanted to achieve.</p>
+
+    <p>Out of all our dates, Soho House was the best &mdash; hum dono Pune mein itne close hue, virtual sleepover bhi kar liya 😂, and I was so excited ki kab tu Pune se vapas aayegi aur kab main tujhe milunga. It was the best date for me 💕.</p>
+
+    <p>&ldquo;Koi ladki mujhse itna pyaar kaise kar sakti hai 🥹&rdquo; &mdash; jab tune mere liye first time tiffin bheja, tab I had no words. It was such an emotional moment for me. Sapno mein bhi nahi socha, voh sach kar diya tune&hellip; aur tera mere office aana, surprise, that too in a traditional dress with a different hairstyle 🥰🥰🥰.</p>
+
+    <div class="note">
+      <span class="stamp">16th Aug &middot; 12 pm</span>
+      <p>Madam, love you &mdash; the gussa hai, phone nahi utha raha hoon isiliye&hellip; manana padega ab 😘.</p>
+    </div>
+
+    <div class="divider">
+      <span class="line"></span>
+      <span class="postmark">our<br>wednesdays</span>
+      <span class="line"></span>
+    </div>
+
+    <p>Hamare long Wednesday dates will always be special, and we will make sure we continue this ritual of Wednesday dates in Sweden as well 😙.</p>
+
+    <div class="note">
+      <span class="stamp">16th Aug &middot; 6:30 pm</span>
+      <p>Meeting Devashree again. This will be the last time, soch raha hoon ghar par bula leta hoon &mdash; Vaishnavi bhi mil legi, anyways&hellip;</p>
+    </div>
+
+    <p>Life feels complete &mdash; from strangers, to dates, to making you meet my sister, we completed our 16 days. Though the days were only 16, the quality of time spent felt like months.</p>
+
+    <div class="vow">
+      <p>Devyy, I'm still learning how to love you right. Sometimes I might get it wrong, but I promise I'm always trying &mdash; because you're the one I want to keep getting better for.</p>
+    </div>
+
+    <p>Destiny bhi kaisi hai hamari &mdash; humne kabhi ek dusre ko life mein dhoonda nahi, bas mil gaye, aur ab door rehna nahi ho raha ek dusre se 😞. Anyways, I guess it's time for me to see you for the last time in 2026 😥.</p>
+
+    <p>Devyuuu, I promise &mdash; we'll be starting our forever as that same cute, happy couple, living under the exact same roof, sharing endless Wednesday dates for the rest of our lives.</p>
+
+    <div class="signoff">
+      <div class="line1">Until then, study hard, fulfill your dreams, make me proud, hold onto every memory &mdash;</div>
+      <div class="line2">and remember, I'm always just one call away.</div>
+      <div class="line1" style="margin-top:16px;">Love you the love you, always. 💕</div>
+      <div class="cry">(I'm not crying 😭😭😭)</div>
+    </div>
+
+  </div>
+
+<script>
+  // starfield
+  const sky = document.getElementById('sky');
+  const starCount = window.innerWidth < 600 ? 30 : 55;
+  for(let i=0;i<starCount;i++){
+    const s = document.createElement('div');
+    s.className='star';
+    s.style.left = Math.random()*100+'%';
+    s.style.top = Math.random()*60+'%';
+    s.style.animationDelay = (Math.random()*4)+'s';
+    sky.appendChild(s);
+  }
+
+  // drifting hearts (ambient, restrained)
+  function spawnHeart(){
+    const h = document.createElement('div');
+    h.className='drift-heart';
+    h.textContent = ['♥','💕','🩷'][Math.floor(Math.random()*3)];
+    h.style.left = Math.random()*100+'%';
+    h.style.setProperty('--dx', (Math.random()*80-40)+'px');
+    h.style.animationDuration = (10+Math.random()*8)+'s';
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(), 19000);
+  }
+  setInterval(spawnHeart, 1800);
+  spawnHeart();
+
+  // envelope open interaction
+  const wrap = document.getElementById('envelopeWrap');
+  const cover = document.getElementById('cover');
+  const letter = document.getElementById('letter');
+  let opened = false;
+
+  cover.addEventListener('click', () => {
+    if(opened) return;
+    opened = true;
+    wrap.classList.add('open');
+    setTimeout(() => {
+      cover.classList.add('hidden');
+      letter.classList.add('show');
+      setTimeout(()=> letter.scrollIntoView({behavior:'smooth', block:'start'}), 150);
+    }, 900);
+  });
+</script>
+
+</body>
+</html>
